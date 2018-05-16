@@ -1,10 +1,13 @@
 package com.datarepublic.simplecab;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
@@ -17,64 +20,73 @@ public class Client implements SimpleCabService {
     private String medallions;
 	@Option(name="-date",usage="pickup date")
 	private String pickupDate;
+	@Option(name="-clear",usage="clear cache")
+	private boolean clearCache;
 	
 	public static void main(String[] args) throws Exception {
 		Client client = new Client();
 		CmdLineParser parser = new CmdLineParser(client);
 		parser.parseArgument(args);
-		System.out.println("request server: "+client.baseUrl);
-		System.out.println("ignoreCache: "+client.ignoreCache);
-		System.out.println("medallions: "+client.medallions);
-		System.out.println("pickupDate: "+client.pickupDate);
-		client.sendGet();
+		if(client.clearCache){
+			client.deleteCache();
+		} else {
+			System.out.println("request server: "+client.baseUrl);
+			System.out.println("ignoreCache: "+client.ignoreCache);
+			System.out.println("medallions: "+client.medallions);
+			System.out.println("pickupDate: "+client.pickupDate);
+			System.out.println(client.toString());
+
+		}
 	}
 
 	// HTTP GET request
-	private void sendGet() throws Exception {
-
-		String url = "http://"+baseUrl+"/cabs?medallions="+medallions+"&pickup_date="+pickupDate;
-
-		URL obj = new URL(url);
-		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-		// optional default is GET
-		con.setRequestMethod("GET");
-
-		int responseCode = con.getResponseCode();
-		System.out.println("\nSending 'GET' request to URL : " + url);
-		System.out.println("Response Code : " + responseCode);
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				con.getInputStream()));
-		String inputLine;
+	private String sendGet(String url) {
 		StringBuffer response = new StringBuffer();
+		URL obj;
+		try {
+			obj = new URL(url);
+			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
+			// optional default is GET
+			con.setRequestMethod("GET");
+
+			int responseCode = con.getResponseCode();
+			System.out.println("\nSending 'GET' request to URL : " + url);
+			System.out.println("Response Code : " + responseCode);
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					con.getInputStream()));
+			String inputLine;
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		in.close();
-
-		// print result
-		System.out.println(response.toString());
-
+		return response.toString();
 	}
 
 	@Override
 	public void deleteCache() {
-		// TODO Auto-generated method stub
+		sendGet("http://"+baseUrl+"/clearcache");
 	}
 
 	@Override
 	public String getMedallionsSummary(Date pickupDate, String... medallions) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getMedallionsSummary(pickupDate, false, medallions);
 	}
 
 	@Override
 	public String getMedallionsSummary(Date pickupDate, boolean ignoreCache,
 			String... medallions) {
-		// TODO Auto-generated method stub
-		return null;
+		String url = "http://"+baseUrl+"/cabs?medallions="+medallions+"&pickup_date="+pickupDate;
+		return sendGet(url);
 	}
 
 	public String getBaseUrl() {
