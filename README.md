@@ -1,7 +1,7 @@
 # datarepublic-client
 Client repo for querying datarepublic restful api
 
-## how to running
+## how to run
 1. download the client jar file
 2. use the command below to query the api
 ``` 
