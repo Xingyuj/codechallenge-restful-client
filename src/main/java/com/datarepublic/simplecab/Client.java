@@ -6,36 +6,35 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 
 public class Client implements SimpleCabService {
-	@Option(name="-url",usage="base url for server")
+	@Option(name = "-url", usage = "base url for server")
 	private String baseUrl = "127.0.0.1:8080";
-	@Option(name="-i",usage="ignore cache or not when querying")
-    private boolean ignoreCache;
-	@Option(name="-med",usage="medallions need to be queried")
-    private String medallions;
-	@Option(name="-date",usage="pickup date")
+	@Option(name = "-i", usage = "ignore cache or not when querying")
+	private boolean ignoreCache;
+	@Option(name = "-med", usage = "medallions need to be queried")
+	private String medallions;
+	@Option(name = "-date", usage = "pickup date")
 	private String pickupDate;
-	@Option(name="-clear",usage="clear cache")
+	@Option(name = "-clear", usage = "clear cache")
 	private boolean clearCache;
-	
+
 	public static void main(String[] args) throws Exception {
 		Client client = new Client();
 		CmdLineParser parser = new CmdLineParser(client);
 		parser.parseArgument(args);
-		if(client.clearCache){
+		if (client.clearCache) {
 			client.deleteCache();
 		} else {
-			System.out.println("request server: "+client.baseUrl);
-			System.out.println("ignoreCache: "+client.ignoreCache);
-			System.out.println("medallions: "+client.medallions);
-			System.out.println("pickupDate: "+client.pickupDate);
-			System.out.println(client.toString());
-
+			System.out.println("request server: " + client.baseUrl);
+			System.out.println("ignoreCache: " + client.ignoreCache);
+			System.out.println("medallions: " + client.medallions);
+			System.out.println("pickupDate: " + client.pickupDate);
+			System.out.println(client.getMedallionsSummary(client.pickupDate,
+					client.ignoreCache, client.medallions));
 		}
 	}
 
@@ -74,18 +73,19 @@ public class Client implements SimpleCabService {
 
 	@Override
 	public void deleteCache() {
-		sendGet("http://"+baseUrl+"/clearcache");
+		sendGet("http://" + baseUrl + "/clearcache");
 	}
 
 	@Override
-	public String getMedallionsSummary(Date pickupDate, String... medallions) {
+	public String getMedallionsSummary(String pickupDate, String medallions) {
 		return this.getMedallionsSummary(pickupDate, false, medallions);
 	}
 
 	@Override
-	public String getMedallionsSummary(Date pickupDate, boolean ignoreCache,
-			String... medallions) {
-		String url = "http://"+baseUrl+"/cabs?medallions="+medallions+"&pickup_date="+pickupDate;
+	public String getMedallionsSummary(String pickupDate, boolean ignoreCache,
+			String medallions) {
+		String url = "http://" + baseUrl + "/cabs?medallions=" + medallions
+				+ "&pickup_date=" + pickupDate;
 		return sendGet(url);
 	}
 
