@@ -1,4 +1,4 @@
-# datarepublic-client
+# codechallenge-restful-client
 Client repo for querying datarepublic restful api
 
 ## How to run
