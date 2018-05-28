@@ -1,5 +1,5 @@
 # codechallenge-restful-client
-Client repo for querying datarepublic restful api
+Client repo for querying a code challenge restful api
 
 ## How to run
 1. download the client jar file
