@@ -1,4 +1,4 @@
-package com.datarepublic.simplecab;
+package com.ethanji.simplecab;
 
 public interface SimpleCabService {
 

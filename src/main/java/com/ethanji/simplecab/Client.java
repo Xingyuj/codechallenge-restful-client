@@ -1,4 +1,4 @@
-package com.datarepublic.simplecab;
+package com.ethanji.simplecab;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class Client implements SimpleCabService {
 	public String getMedallionsSummary(String pickupDate, boolean ignoreCache,
 			String medallions) {
 		String url = "http://" + baseUrl + "/cabs?medallions=" + medallions
-				+ "&pickup_date=" + pickupDate;
+				+ "&pickup_date=" + pickupDate+"&cached="+!ignoreCache;
 		return sendGet(url);
 	}
 
