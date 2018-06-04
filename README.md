@@ -23,3 +23,4 @@ http://54.206.58.168:8080/clearcache
 * -url -- gives the server address, omit this will use localhost:8080 as default, you can deploy [server](https://github.com/Xingyuj/codechallenge-restful-server) locally or use the default address provided which is a AWS Ec2 which deployed the server.
 * -med -- is medallions need to be queried, you can input as many as you want using ',' to split them.
 * -date -- requiring pickup date
+* -clear -- clear cache
